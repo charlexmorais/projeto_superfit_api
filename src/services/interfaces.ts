@@ -5,3 +5,7 @@ export interface InterfaceCrud<DTO> {
   update(id: string, payload: DTO): Promise<DTO>;
   delete(id: string): Promise<void>; // Retorna true se a exclusão for bem-sucedida, ou false se não for
 }
+export interface Report<T> {
+  get(): Promise<T>;
+}
+

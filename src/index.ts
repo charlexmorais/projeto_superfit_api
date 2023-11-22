@@ -1,5 +1,4 @@
 
-
 import express from "express";
 import { Client } from "pg";
 import dotenv from "dotenv";
@@ -11,6 +10,9 @@ import { ModalidadePlanos } from "./services/modalidades_planos";
 import { MatriculaService} from "./services/matriculas.services";
 import { ListaInadimplenciaService} from "./services/listainadimplentes";
 import { ListaPagamentoService} from "./services/listapagamentos";
+import { RelatorioAtualService} from "./services/relatorioAtual.services";
+
+
 
 
 dotenv.config();
@@ -22,7 +24,7 @@ const port = 3000;
 
 app.use(express.json());
 // CRUD 
-const db = new Client({
+export const db = new Client({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
   database: process.env.DB_NAME,
@@ -41,6 +43,9 @@ const matriculaService=  new MatriculaService(db);
 const horariosService=  new HorariosService(db);
 const listaInadimplenciaService=new ListaInadimplenciaService(db);
 const listaPagamentosService=new ListaPagamentoService(db);
+const relatorioAtualService=new RelatorioAtualService(db);
+
+
 
 // READ -------------
 app.get("/pessoas", async (req, res) => {
@@ -440,6 +445,19 @@ app.delete("/listapagamentos/:id", async (req, res) => {
     });
   }
 });
+app.get("/relatorioatual", async (req, res) => {
+  try {
+    const relatorioAtual = new RelatorioAtualService(db); // Certifique-se de passar a conexão do banco de dados aqui
+    const relatorio = await relatorioAtual.get();
+    res.json(relatorio);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
 app.listen(port, () => {
   console.log("server run", port);
   
