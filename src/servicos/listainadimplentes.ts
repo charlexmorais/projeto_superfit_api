@@ -1,7 +1,7 @@
 // Importando a interface necessária.
 import { InterfaceCrud } from "./interfaces";
 
-// Definindo o modelo de dados para uma pessoa.
+// Definindo  o modelo de dados para uma pessoa.
 type ListaInadimplenciaModel = {
   inadimplente_id: string; 
   aluno_id: string;

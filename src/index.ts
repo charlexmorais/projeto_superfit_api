@@ -11,12 +11,10 @@ import { MatriculaService} from "./servicos/matriculas.services";
 import { ListaInadimplenciaService} from "./servicos/listainadimplentes";
 import { ListaPagamentoService} from "./servicos/listapagamentos";
 import { RelatorioAtualService} from "./servicos/relatorioAtual.services";
-
-import jwt from 'jsonwebtoken';
-
+import { verifyJWT } from "./conexao/autorizacao";
+import { SECRET } from "./conexao/autorizacao";
 
 dotenv.config();
-
 
 const app = express();
 const port = 3000;
@@ -45,75 +43,73 @@ const listaInadimplenciaService=new ListaInadimplenciaService(db);
 const listaPagamentosService=new ListaPagamentoService(db);
 const relatorioAtualService=new RelatorioAtualService(db);
 
-// Chave secreta para assinar o token JWT
-const segredo = 'ChaveSuperSecreta';
 
-// Função para gerar o token
-function gerarToken(payload) {
-  return jwt.sign(payload, segredo, { expiresIn: '1h' });
-}
 
-// Rota de login para autenticação e geração do token
-app.post('/pessoas', async (req, res) => {
+export const jwt = require('jsonwebtoken');
+const bodyParser = require('body-parser');
+
+
+
+
+
+
+app.use(bodyParser.json());
+
+app.get('/', (req, res, next) => {
+  res.json({ message: "Tudo ok por aqui!" });
+});
+
+app.get('/pessoas', verifyJWT, async (req, res, next) => {
   try {
-    // Aqui você faria a validação das credenciais do usuário (exemplo simples)
-    const { email, cgc, tipo_cadastro } = req.body;
-
-    // Verificar se o usuário já existe no banco de dados
-    const usuarioExistente = await pessoaService.alunoExistente(email, cgc, tipo_cadastro);
-    if (usuarioExistente) {
-      // Se o usuário já existir, retornar um erro de autenticação
-      return res.status(401).json({ erro: 'Usuário já cadastrado' });
-    }
-
-    // Se as credenciais não existirem, gerar um token com os dados que deseja incluir
-    const payload = {
-      email,
-      cgc,
-      tipo_cadastro,
-      // Adicione outros dados que deseja incluir no token
-    };
-
-    // Gerar o token com o payload e a chave secreta
-    const token = gerarToken(payload);
-
-    // Enviar o token como resposta
-    res.json({ token });
+    const pessoas = await pessoaService.getAll();
+    res.json(pessoas);
+    console.log("Retornou todos clientes!");
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Erro ao buscar clientes.' });
   }
 });
 
-// Outras rotas e lógica do seu aplicativo...
-// Outras rotas e lógica do seu aplicativo...
+app.post('/login', async (req, res, next) => {
+  try {
+    const { cgc, email } = req.body;
+    const pessoa = await pessoaService.getByEmailOrCGC(cgc || email);
 
-// READ -------------
-app.get("/pessoas", async (req, res) => {
-  const users = await pessoaService.getAll();
-  res.json(users);
+    if (pessoa && pessoa.email === email) {
+      const token = jwt.sign({ email: email }, SECRET, {
+        expiresIn: 300 // expires in 5min
+      });
+      return res.json({ auth: true, token: token });
+    }
+
+    res.status(401).json({ auth: false, message: 'Credenciais inválidas.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao realizar o login.' });
+  }
 });
 
-app.get("/pessoas/:id", async (req, res) => {
-  const { id } = req.params;
-  const user = await pessoaService.find(id);
-  res.json(user);
-});
+
+// ...
+// Resto do seu código
+
+
+
+
 
 // CREATE
-// app.post("/pessoas", async (req, res) => {
-//   try {
-//     const user = pessoaService.create(req.body);
-//     res.json(user);
-//   } catch (error) {
-//     res.status(500).json({
-//       error,
-//       message: error.message,
-//     });
-//   }
-// });
+app.post("/pessoas", verifyJWT,  async (req, res) => {
+  try {
+    const user = pessoaService.create(req.body);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({
+      error,
+      message: error.message,
+    });
+  }
+});
 
 // UPDATE
-app.put("/pessoas/:id", async (req, res) => {
+app.put("/pessoas/:id", verifyJWT, async (req, res) => {
   try {
     const user = await pessoaService.update(req.params.id, req.body);
     res.json(user);
@@ -125,7 +121,7 @@ app.put("/pessoas/:id", async (req, res) => {
   }
 });
 // DELETE
-app.delete("/pessoas/:id", async (req, res) => {
+app.delete("/pessoas/:id", verifyJWT, async (req, res) => {
   try {
     const { id } = req.params;
     await pessoaService.delete(id);
