@@ -2,17 +2,17 @@
 import express from "express";
 import { Client } from "pg";
 import dotenv from "dotenv";
-import { PessoaService } from "./services/pessoas.services";
-import { ModalidadeService } from "./services/modalidades.services";
-import { PlanosService } from "./services/planos.services";
-import { HorariosService } from "./services/horarios.services";
-import { ModalidadePlanos } from "./services/modalidades_planos";
-import { MatriculaService} from "./services/matriculas.services";
-import { ListaInadimplenciaService} from "./services/listainadimplentes";
-import { ListaPagamentoService} from "./services/listapagamentos";
-import { RelatorioAtualService} from "./services/relatorioAtual.services";
+import { PessoaService } from "./servicos/pessoas.services";
+import { ModalidadeService } from "./servicos/modalidades.services";
+import { PlanosService } from "./servicos/planos.services";
+import { HorariosService } from "./servicos/horarios.services";
+import { ModalidadePlanos } from "./servicos/modalidades_planos";
+import { MatriculaService} from "./servicos/matriculas.services";
+import { ListaInadimplenciaService} from "./servicos/listainadimplentes";
+import { ListaPagamentoService} from "./servicos/listapagamentos";
+import { RelatorioAtualService} from "./servicos/relatorioAtual.services";
 
-
+import jwt from 'jsonwebtoken';
 
 
 dotenv.config();
@@ -45,7 +45,47 @@ const listaInadimplenciaService=new ListaInadimplenciaService(db);
 const listaPagamentosService=new ListaPagamentoService(db);
 const relatorioAtualService=new RelatorioAtualService(db);
 
+// Chave secreta para assinar o token JWT
+const segredo = 'ChaveSuperSecreta';
 
+// Função para gerar o token
+function gerarToken(payload) {
+  return jwt.sign(payload, segredo, { expiresIn: '1h' });
+}
+
+// Rota de login para autenticação e geração do token
+app.post('/pessoas', async (req, res) => {
+  try {
+    // Aqui você faria a validação das credenciais do usuário (exemplo simples)
+    const { email, cgc, tipo_cadastro } = req.body;
+
+    // Verificar se o usuário já existe no banco de dados
+    const usuarioExistente = await pessoaService.alunoExistente(email, cgc, tipo_cadastro);
+    if (usuarioExistente) {
+      // Se o usuário já existir, retornar um erro de autenticação
+      return res.status(401).json({ erro: 'Usuário já cadastrado' });
+    }
+
+    // Se as credenciais não existirem, gerar um token com os dados que deseja incluir
+    const payload = {
+      email,
+      cgc,
+      tipo_cadastro,
+      // Adicione outros dados que deseja incluir no token
+    };
+
+    // Gerar o token com o payload e a chave secreta
+    const token = gerarToken(payload);
+
+    // Enviar o token como resposta
+    res.json({ token });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Outras rotas e lógica do seu aplicativo...
+// Outras rotas e lógica do seu aplicativo...
 
 // READ -------------
 app.get("/pessoas", async (req, res) => {
@@ -60,17 +100,17 @@ app.get("/pessoas/:id", async (req, res) => {
 });
 
 // CREATE
-app.post("/pessoas", async (req, res) => {
-  try {
-    const user = pessoaService.create(req.body);
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({
-      error,
-      message: error.message,
-    });
-  }
-});
+// app.post("/pessoas", async (req, res) => {
+//   try {
+//     const user = pessoaService.create(req.body);
+//     res.json(user);
+//   } catch (error) {
+//     res.status(500).json({
+//       error,
+//       message: error.message,
+//     });
+//   }
+// });
 
 // UPDATE
 app.put("/pessoas/:id", async (req, res) => {

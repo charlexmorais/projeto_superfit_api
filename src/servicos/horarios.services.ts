@@ -18,7 +18,7 @@ export class HorariosService implements InterfaceCrud<HorariosModel> {
     this.db = db;
   }
   // Função para validar os dados de criação (pode ser expandida para adicionar validações específicas).
-  async createValidator(payload: HorariosModel) {
+  async validandoDados(payload: HorariosModel) {
     return true; // Pode adicionar lógica de validação aqui.
   }
 

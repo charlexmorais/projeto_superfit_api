@@ -22,7 +22,7 @@ export class PessoaService implements InterfaceCrud<PessoaModel> {
   }
 
   // Função para validar os dados de criação (pode ser expandida para adicionar validações específicas).
-  async createValidator(payload: PessoaModel) {
+  async validandoDados(payload: PessoaModel) {
     return true; // Pode adicionar lógica de validação aqui.
   }
 

@@ -16,7 +16,7 @@ export class ModalidadePlanos implements InterfaceCrud<ModalidadesPlanosModel> {
   }
 
   // Função para validar os dados de criação (pode ser expandida para adicionar validações específicas).
-  async createValidator(payload: ModalidadesPlanosModel) {
+  async validandoDados(payload: ModalidadesPlanosModel) {
     return true; // Pode adicionar lógica de validação aqui.
   }
 

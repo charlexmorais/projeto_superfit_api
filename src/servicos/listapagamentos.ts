@@ -17,7 +17,7 @@ export class ListaPagamentoService
     this.db = db;
   }
   // Função para validar os dados de criação (pode ser expandida para adicionar validações específicas).
-  async createValidator(payload: ListaPagamentoModel) {
+  async validandoDados(payload: ListaPagamentoModel) {
     return true; // Pode adicionar lógica de validação aqui.
   }
 

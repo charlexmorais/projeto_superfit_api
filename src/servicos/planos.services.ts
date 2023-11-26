@@ -18,7 +18,7 @@ export class PlanosService implements InterfaceCrud<PlanosModel> {
   }
 
   // Função para validar os dados de criação (pode ser expandida para adicionar validações específicas).
-  async createValidator(payload: PlanosModel) {
+  async validandoDados(payload: PlanosModel) {
     return true; // Pode adicionar lógica de validação aqui.
   }
 

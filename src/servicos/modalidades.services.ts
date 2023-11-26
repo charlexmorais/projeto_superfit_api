@@ -13,6 +13,10 @@ export class ModalidadeService implements InterfaceCrud<ModalidadeModel> {
   constructor(db: any) {
     this.db = db; // O construtor recebe uma instância de banco de dados e a armazena na propriedade db.
   }
+  // / Função para validar os dados de criação (pode ser expandida para adicionar validações específicas).
+  async validandoDados(payload: ModalidadeModel) {
+    return true; // Pode adicionar lógica de validação aqui.
+  }
 
   // Método para criar um novo objeto Modalidade no banco de dados.
   async create(payload: ModalidadeModel): Promise<ModalidadeModel> {

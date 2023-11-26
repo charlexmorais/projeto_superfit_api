@@ -19,7 +19,7 @@ export class ListaInadimplenciaService
     this.db = db;
   }
   // Função para validar os dados de criação (pode ser expandida para adicionar validações específicas).
-  async createValidator(payload: ListaInadimplenciaModel) {
+  async validandoDados(payload: ListaInadimplenciaModel) {
     return true; // Pode adicionar lógica de validação aqui.
   }
    // Função para criar uma nova pessoa no banco de dados.

@@ -20,7 +20,7 @@ export class MatriculaService implements InterfaceCrud<MatriculaModel> {
   }
   
    // Função para validar os dados de criação (pode ser expandida para adicionar validações específicas).
-  async createValidator(payload: MatriculaModel) {
+  async validandoDados(payload: MatriculaModel) {
     return true; // Pode adicionar lógica de validação aqui.
   }
 
