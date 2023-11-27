@@ -99,7 +99,7 @@ app.post('/login', async (req, res, next) => {
 app.post("/pessoas", verifyJWT,  async (req, res) => {
   try {
     const user = pessoaService.create(req.body);
-    res.json(user);
+    res.json({ message: " pessoa inserida com sucesso" });
   } catch (error) {
     res.status(500).json({
       error,
@@ -135,20 +135,20 @@ app.delete("/pessoas/:id", verifyJWT, async (req, res) => {
 });
 // read
 
-app.get("/modalidades", async (req, res) => {
+app.get("/modalidades", verifyJWT,async (req, res) => {
   const modalidades = await modalidadeService.getAll();
   res.json(modalidades);
 });
-app.get("/modalidades/:id", async (req, res) => {
+app.get("/modalidades/:id",verifyJWT, async (req, res) => {
   const { id } = req.params;
   const user = await modalidadeService.find(id);
   res.json(user);
 });
 
-app.post("/modalidades", async (req, res) => {
+app.post("/modalidades",verifyJWT, async (req, res) => {
   try {
     const modalidade = await modalidadeService.create(req.body);
-    res.json(modalidade);
+    res.json({ message: " modalidade inserida com sucesso" });
   } catch (error) {
     res.status(500).json({
       error,
@@ -157,7 +157,7 @@ app.post("/modalidades", async (req, res) => {
   }
 });
 // update
-app.put("/modalidades/:id", async (req, res) => {
+app.put("/modalidades/:id",verifyJWT, async (req, res) => {
   try {
     const user = await modalidadeService.update(req.params.id, req.body);
     res.json(user);
@@ -171,7 +171,7 @@ app.put("/modalidades/:id", async (req, res) => {
 
 // delete
 
-app.delete("/modalidades/:id",async (req , res) => {
+app.delete("/modalidades/:id",verifyJWT,async (req , res) => {
   try {
     const { id } = req.params;
     await modalidadeService.delete(id);
@@ -185,22 +185,22 @@ app.delete("/modalidades/:id",async (req , res) => {
 
 });
 // read
-app.get("/planos", async (req, res) => {
+app.get("/planos",verifyJWT, async (req, res) => {
   const users = await planosService.getAll();
   res.json(users);
 });
 
-app.get("/planos/:id", async (req, res) => {
+app.get("/planos/:id",verifyJWT, async (req, res) => {
   const { id } = req.params;
   const user = await planosService.find(id);
   res.json(user);
 });
 
 // CREATE
-app.post("/planos", async (req, res) => {
+app.post("/planos", verifyJWT,async (req, res) => {
   try {
     const user = planosService.create(req.body);
-    res.json(user);
+    res.json({ message: " plano inserido com sucesso" });
   } catch (error) {
     res.status(500).json({
       error,
@@ -210,7 +210,7 @@ app.post("/planos", async (req, res) => {
 });
 
 // UPDATE
-app.put("/planos/:id", async (req, res) => {
+app.put("/planos/:id",verifyJWT, async (req, res) => {
   try {
     const user = await planosService.update(req.params.id, req.body);
     res.json(user);
@@ -222,7 +222,7 @@ app.put("/planos/:id", async (req, res) => {
   }
 });
 // DELETE
-app.delete("/planos/:id", async (req, res) => {
+app.delete("/planos/:id", verifyJWT,async (req, res) => {
   try {
     const { id } = req.params;
     await planosService.delete(id);
@@ -236,21 +236,21 @@ app.delete("/planos/:id", async (req, res) => {
 });
 // read
 
-app.get("/modalidadesplanos", async (req, res) => {
+app.get("/modalidadesplanos",verifyJWT, async (req, res) => {
   const users = await modalidadePlanos.getAll();
   res.json(users);
 });
 
-app.get("/modalidadesplanos/:id", async (req, res) => {
+app.get("/modalidadesplanos/:id", verifyJWT,async (req, res) => {
   const { id } = req.params;
   const user = await modalidadePlanos.find(id);
   res.json(user);
 });
 // CREATE
-app.post("/modalidadesplanos", async (req, res) => {
+app.post("/modalidadesplanos",verifyJWT, async (req, res) => {
   try {
     const user = modalidadePlanos.create(req.body);
-    res.json(user);
+    res.json({ message: " inserido com sucesso" });
   } catch (error) {
     res.status(500).json({
       error,
@@ -259,7 +259,7 @@ app.post("/modalidadesplanos", async (req, res) => {
   }
 });
 // UPDATE
-app.put("/modalidadesplanos/:id", async (req, res) => {
+app.put("/modalidadesplanos/:id",verifyJWT, async (req, res) => {
   try {
     const user = await modalidadePlanos.update(req.params.id, req.body);
     res.json(user);
@@ -271,7 +271,7 @@ app.put("/modalidadesplanos/:id", async (req, res) => {
   }
 });
 // DELETE
-app.delete("/modalidadesplanos/:id", async (req, res) => {
+app.delete("/modalidadesplanos/:id",verifyJWT, async (req, res) => {
   try {
     const { id } = req.params;
     await modalidadePlanos.delete(id);

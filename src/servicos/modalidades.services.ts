@@ -37,6 +37,7 @@ export class ModalidadeService implements InterfaceCrud<ModalidadeModel> {
   // Método para obter todos os objetos Modalidade do banco de dados.
   async getAll(): Promise<ModalidadeModel[]> {
     const result = await this.db.query("SELECT * FROM modalidades");
+    return result.rows as [];
     // Executa uma consulta para obter todos os registros na tabela modalidades.
 
     return result.rows as ModalidadeModel[];
@@ -52,10 +53,26 @@ export class ModalidadeService implements InterfaceCrud<ModalidadeModel> {
     // Retorna o registro encontrado como um objeto Modalidade.
   }
 
-  // Método para atualizar um objeto Modalidade com base em seu ID.
-  async update(id: string, payload: ModalidadeModel): Promise<ModalidadeModel> {
-    return {} as any; // Ainda não implementado. Retornaria o objeto Modalidade atualizado.
+ // Método para atualizar um objeto Modalidade com base em seu ID.
+async update(id: string, payload: ModalidadeModel): Promise<ModalidadeModel | null> {
+  const { nome } = payload; // Extrai o novo nome da modalidade do payload.
+
+  const query = `UPDATE modalidades SET nome = $1 WHERE id = $2 RETURNING *;`;
+  // Define a consulta SQL para atualizar o nome da modalidade com base no ID.
+
+  const values = [nome, id]; // Prepara os valores para a consulta.
+
+  const result = await this.db.query(query, values);
+  // Executa a consulta no banco de dados para atualizar o nome da modalidade.
+
+  if (result.rows.length === 0) {
+    return null; // Se não encontrar a modalidade, retorna null.
   }
+
+  return result.rows[0] as ModalidadeModel;
+  // Retorna o primeiro registro da resposta do banco de dados, que é o objeto Modalidade atualizado.
+}
+
   // Função para excluir uma pessoa pelo ID.
 async delete(id: string): Promise<void> {
   const result = await this.db.query("DELETE FROM modalidades WHERE id = $1", [id]);
