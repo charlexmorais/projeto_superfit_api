@@ -285,18 +285,18 @@ app.delete("/modalidadesplanos/:id",verifyJWT, async (req, res) => {
 });
 // read
 
-app.get("/matricula", async (req, res) => {
+app.get("/matricula", verifyJWT,async (req, res) => {
   const users = await matriculaService.getAll();
   res.json(users);
 });
 
-app.get("/matricula/:id", async (req, res) => {
+app.get("/matricula/:id",verifyJWT, async (req, res) => {
   const { id } = req.params;
   const user = await matriculaService.find(id);
   res.json(user);
 });
 // CREATE
-app.post("/matricula", async (req, res) => {
+app.post("/matricula", verifyJWT,async (req, res) => {
   try {
     const user = matriculaService.create(req.body);
     res.json(user);
@@ -308,7 +308,7 @@ app.post("/matricula", async (req, res) => {
   }
 });
 // UPDATE
-app.put("/matricula/:id", async (req, res) => {
+app.put("/matricula/:id",verifyJWT, async (req, res) => {
   try {
     const user = await matriculaService.update(req.params.id, req.body);
     res.json(user);
@@ -320,7 +320,7 @@ app.put("/matricula/:id", async (req, res) => {
   }
 });
 // DELETE
-app.delete("/matricula/:id", async (req, res) => {
+app.delete("/matricula/:id",verifyJWT, async (req, res) => {
   try {
     const { id } = req.params;
     await matriculaService.delete(id);
@@ -334,18 +334,18 @@ app.delete("/matricula/:id", async (req, res) => {
 });
 // read
 
-app.get("/horarios", async (req, res) => {
+app.get("/horarios",verifyJWT, async (req, res) => {
   const users = await horariosService.getAll();
   res.json(users);
 });
 
-app.get("/horarios/:id", async (req, res) => {
+app.get("/horarios/:id",verifyJWT, async (req, res) => {
   const { id } = req.params;
   const user = await horariosService.find(id);
   res.json(user);
 });
 // CREATE
-app.post("/horarios", async (req, res) => {
+app.post("/horarios", verifyJWT,async (req, res) => {
   try {
     const user = horariosService.create(req.body);
     res.json(user);
@@ -357,7 +357,7 @@ app.post("/horarios", async (req, res) => {
   }
 });
 // UPDATE
-app.put("/horarios/:id", async (req, res) => {
+app.put("/horarios/:id", verifyJWT, async (req, res) => {
   try {
     const user = await horariosService.update(req.params.id, req.body);
     res.json(user);
@@ -371,7 +371,7 @@ app.put("/horarios/:id", async (req, res) => {
 
 
 // DELETE
-app.delete("/horarios/:id", async (req, res) => {
+app.delete("/horarios/:id",verifyJWT, async (req, res) => {
   try {
     const { id } = req.params;
     await horariosService.delete(id);

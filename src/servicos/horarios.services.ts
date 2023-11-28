@@ -5,8 +5,8 @@ import { InterfaceCrud } from "./interfaces";
 type HorariosModel = {
   id?: string; // ID é opcional, pois pode ser gerado automaticamente.
   dia_semana: string;
-  horario_inicio: string;
-  horario_fim: string;
+  hora_inicio: string;
+  hora_fim: string;
   modalidade_id:string;
   instrutor_id:string;
 };
@@ -24,12 +24,12 @@ export class HorariosService implements InterfaceCrud<HorariosModel> {
 
   // Função para criar uma nova pessoa no banco de dados.
   async create(payload: HorariosModel): Promise<HorariosModel> {
-    const { dia_semana, horario_inicio, horario_fim , modalidade_id,instrutor_id} = payload;
+    const { dia_semana, hora_inicio, hora_fim , modalidade_id,instrutor_id} = payload;
     const query = `
-    INSERT INTO horarios_aulas ( dia_semana,horario_inicio,horario_fim,modalidade_id,instrutor_id) 
-    values ($1, $2, $3) Returning *;
+    INSERT INTO horarios_aulas ( dia_semana,hora_inicio,hora_fim,modalidade_id,instrutor_id) 
+    values ($1, $2, $3,$4,$5) Returning *;
   `;
-    const values = [dia_semana, horario_inicio, horario_fim,  modalidade_id,instrutor_id];
+    const values = [dia_semana, hora_inicio, hora_fim,  modalidade_id,instrutor_id];
     const result = await this.db.query(query, values);
     return result.rows[0];
   }
@@ -47,16 +47,16 @@ export class HorariosService implements InterfaceCrud<HorariosModel> {
     );
     return result.rows[0]; // Retorna a primeira linha encontrada (se houver).
   }
-  // Função para atualizar os dados de uma pessoa pelo ID.
   async update(id: string, payload: HorariosModel): Promise<HorariosModel> {
-    const { dia_semana, horario_inicio, horario_fim ,modalidade_id,instrutor_id } = payload;
-    const values = [dia_semana, horario_inicio, horario_fim,modalidade_id,instrutor_id];
+    const { dia_semana, hora_inicio, hora_fim, modalidade_id, instrutor_id } = payload;
+    const values = [dia_semana, hora_inicio, hora_fim, modalidade_id, instrutor_id, id]; // Adicionando o 'id' ao final dos valores
     const result = await this.db.query(
-      "UPDATE horarios_aulas SET dia_semana = $1, horario_inicio = $2, horario_fim =$3 ,modalidade_id=$4 ,instrutor_id = $5 WHERE id = $6 RETURNING *;",
+      "UPDATE horarios_aulas SET dia_semana = $1, hora_inicio = $2, hora_fim = $3, modalidade_id = $4, instrutor_id = $5 WHERE id = $6 RETURNING *;",
       values
     );
     return result.rows[0]; // Retorna a primeira linha atualizada.
   }
+  
 
   // Função para excluir uma pessoa pelo ID.
   async delete(id: string): Promise<void> {
