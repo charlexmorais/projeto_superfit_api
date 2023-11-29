@@ -1,9 +1,9 @@
-// Importando a interface necessária.
+
 import { InterfaceCrud } from "./interfaces";
 
-// Definindo o modelo de dados para uma pessoa.
+
 type MatriculaModel = {
-  id?: string; // ID é opcional, pois pode ser gerado automaticamente.
+  id?: string;
   aluno_id: string;
   plano_id: string;
   dia_vencimento: string;
@@ -24,7 +24,7 @@ export class MatriculaService implements InterfaceCrud<MatriculaModel> {
     return true; // Pode adicionar lógica de validação aqui.
   }
 
-  // Função para criar uma nova pessoa no banco de dados.
+  
   async create(payload: MatriculaModel): Promise<MatriculaModel> {
     const {
       aluno_id,
@@ -49,18 +49,18 @@ export class MatriculaService implements InterfaceCrud<MatriculaModel> {
     const result = await this.db.query(query, values);
     return result.rows[0];
   }
-  // Função para buscar todas as pessoas no banco de dados.
+  
   async getAll(): Promise<MatriculaModel[]> {
     const result = await this.db.query("SELECT * FROM matricula");
     return result.rows as MatriculaModel[];
   }
 
-  // Função para buscar uma pessoa pelo ID.
+
   async find(id: string): Promise<MatriculaModel> {
     const result = await this.db.query("SELECT * FROM matricula WHERE id=$1", [
       id,
     ]);
-    return result.rows[0]; // Retorna a primeira linha encontrada (se houver).
+    return result.rows[0]; 
   }
 
   async update(
@@ -118,8 +118,7 @@ export class MatriculaService implements InterfaceCrud<MatriculaModel> {
       throw error;
     }
   }
-  // ... (código anterior)
-
+ 
   async delete(alunoId: string): Promise<void> {
     try {
       const result = await this.db.query("DELETE FROM matricula WHERE aluno_id = $1", [

@@ -1,20 +1,18 @@
-// PessoaService.ts
 
-// Importando a interface necessária.
 import { InterfaceCrud } from "./interfaces";
 
-// Definindo o modelo de dados para uma pessoa.
+
 type PessoaModel = {
-  id?: string; // ID é opcional, pois pode ser gerado automaticamente.
+  id?: string; 
   nome: string;
   email: string;
-  cgc: string; // cnpj ou cpf 
+  cgc: string; 
   tipo_pessoa: string;
   tipo_cadastro: string;
   ativo: string;
 };
 
-// Classe que implementa a interface de operações CRUD.
+
 export class PessoaService implements InterfaceCrud<PessoaModel> {
   db: any; // Conexão com o banco de dados.
 
@@ -30,7 +28,7 @@ export class PessoaService implements InterfaceCrud<PessoaModel> {
   }
  
   async validandoDados(payload: PessoaModel) {
-    return true; // Pode adicionar lógica de validação aqui.
+    return true; 
   }
 
   async create(payload: PessoaModel): Promise<PessoaModel> {
@@ -51,7 +49,7 @@ export class PessoaService implements InterfaceCrud<PessoaModel> {
 
   async find(id: string): Promise<PessoaModel> {
     const result = await this.db.query("SELECT * FROM pessoas WHERE id=$1", [id]);
-    return result.rows[0]; // Retorna a primeira linha encontrada (se houver).
+    return result.rows[0]; 
   }
 
   async update(id: string, payload: PessoaModel): Promise<PessoaModel> {
@@ -61,9 +59,9 @@ export class PessoaService implements InterfaceCrud<PessoaModel> {
       "UPDATE pessoas SET nome = $1, email = $2 WHERE id = $3 Returning *;",
       values
     );
-    return result.rows[0]; // Retorna a primeira linha atualizada.
+    return result.rows[0]; 
   }
- // Método para exclusão em cascata
+ 
  async delete(id: string): Promise<void> {
   try {
     // Remover referências da tabela 'matricula'
@@ -72,7 +70,7 @@ export class PessoaService implements InterfaceCrud<PessoaModel> {
     // Remover referências da tabela 'horarios_aulas' relacionadas ao instrutor
     await this.db.query('DELETE FROM horarios_aulas WHERE instrutor_id = $1', [id]);
 
-    // Agora, remova a pessoa
+    
     await this.db.query('DELETE FROM pessoas WHERE id = $1', [id]);
   } catch (error) {
     throw new Error(`Erro ao excluir a pessoa: ${error.message}`);

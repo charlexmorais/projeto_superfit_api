@@ -1,7 +1,7 @@
-// Importando a interface necessária.
+
 import { InterfaceCrud } from "./interfaces";
 
-// Definindo  o modelo de dados para uma pessoa.
+
 type ListaInadimplenciaModel = {
   inadimplente_id: string; 
   aluno_id: string;
@@ -20,7 +20,7 @@ export class ListaInadimplenciaService
   }
   // Função para validar os dados de criação (pode ser expandida para adicionar validações específicas).
   async validandoDados(payload: ListaInadimplenciaModel) {
-    return true; // Pode adicionar lógica de validação aqui.
+    return true; 
   }
    // Função para criar uma nova pessoa no banco de dados.
    async create(payload: ListaInadimplenciaModel): Promise<ListaInadimplenciaModel> {
