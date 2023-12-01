@@ -1,6 +1,4 @@
-
 import { InterfaceCrud } from "./interfaces";
-
 
 type MatriculaModel = {
   id?: string;
@@ -14,17 +12,15 @@ type MatriculaModel = {
 
 export class MatriculaService implements InterfaceCrud<MatriculaModel> {
   db: any;
-  // Construtor que recebe a conexão com o banco de dados.
+
   constructor(db: any) {
     this.db = db;
   }
 
-  // Função para validar os dados de criação (pode ser expandida para adicionar validações específicas).
-  async validandoDados(payload: MatriculaModel) {
-    return true; // Pode adicionar lógica de validação aqui.
+  async validandoDados(payload: MatriculaModel): Promise<boolean> {
+    return true; // Pode adicionar lógica de validação aqui
   }
 
-  
   async create(payload: MatriculaModel): Promise<MatriculaModel> {
     const {
       aluno_id,
@@ -55,7 +51,6 @@ export class MatriculaService implements InterfaceCrud<MatriculaModel> {
     return result.rows as MatriculaModel[];
   }
 
-
   async find(id: string): Promise<MatriculaModel> {
     const result = await this.db.query("SELECT * FROM matricula WHERE id=$1", [
       id,
@@ -72,7 +67,7 @@ export class MatriculaService implements InterfaceCrud<MatriculaModel> {
         "SELECT * FROM matricula WHERE aluno_id = $1",
         [alunoId]
       );
-      console.log(`Existing Data with aluno_id ${alunoId}:`, existingData.rows);
+      console.log(`Dados existentes com aluno_id ${alunoId}:`, existingData.rows);
 
       const {
         plano_id,
@@ -103,18 +98,18 @@ export class MatriculaService implements InterfaceCrud<MatriculaModel> {
       );
 
       console.log(
-        "SQL Query:",
+        "Consulta SQL:",
         "UPDATE matricula SET plano_id=$2, dia_vencimento=$3, valor_mensalidade=$4, data_inicio=$5, data_fim=$6 WHERE aluno_id=$1 RETURNING *;"
       );
-      console.log("Values:", values);
+      console.log("Valores:", values);
 
       if (result.rowCount > 0) {
         return result.rows[0];
       } else {
-        throw new Error(`No record updated for aluno_id ${alunoId}`);
+        throw new Error(`Nenhum registro atualizado para aluno_id ${alunoId}`);
       }
     } catch (error) {
-      console.error("Error updating entry:", error);
+      console.error("Erro ao atualizar entrada:", error);
       throw error;
     }
   }
@@ -125,13 +120,11 @@ export class MatriculaService implements InterfaceCrud<MatriculaModel> {
         alunoId,
       ]);
       if (result.rowCount === 0) {
-        throw new Error(`No record found for aluno_id ${alunoId}`);
+        throw new Error(`Nenhum registro encontrado para aluno_id ${alunoId}`);
       }
     } catch (error) {
-      console.error("Error deleting entry:", error);
+      console.error("Erro ao excluir entrada:", error);
       throw error;
     }
   }
 }
-
-

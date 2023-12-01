@@ -9,7 +9,6 @@ import { HorariosService } from "./servicos/horarios.services";
 import { ModalidadePlanos } from "./servicos/modalidades_planos";
 import { MatriculaService} from "./servicos/matriculas.services";
 import { ListaInadimplenciaService} from "./servicos/listainadimplentes";
-import { ListaPagamentoService} from "./servicos/listapagamentos";
 import { RelatorioAtualService} from "./servicos/relatorioAtual.services";
 import { verifyJWT } from "./conexao/autorizacao";
 import { SECRET } from "./conexao/autorizacao";
@@ -40,7 +39,6 @@ const modalidadePlanos=  new ModalidadePlanos(db);
 const matriculaService=  new MatriculaService(db);
 const horariosService=  new HorariosService(db);
 const listaInadimplenciaService=new ListaInadimplenciaService(db);
-const listaPagamentosService=new ListaPagamentoService(db);
 const relatorioAtualService=new RelatorioAtualService(db);
 
 
@@ -58,12 +56,19 @@ app.use(bodyParser.json());
 app.get('/', (req, res, next) => {
   res.json({ message: "Tudo ok por aqui!" });
 });
+app.get("/pessoas/:id",verifyJWT, async (req, res) => {
+  const { id } = req.params;
+  const user = await pessoaService.find(id);
+  res.json(user);
+  console.log("pessoa encontrada com sucesso  !");
+});
+
 
 app.get('/pessoas', verifyJWT, async (req, res, next) => {
   try {
     const pessoas = await pessoaService.getAll();
     res.json(pessoas);
-    console.log("Retornou todos clientes!");
+    console.log("Retornou todoas pessoas !");
   } catch (error) {
     res.status(500).json({ error: 'Erro ao buscar clientes.' });
   }
@@ -76,7 +81,7 @@ app.post('/login', async (req, res, next) => {
 
     if (pessoa && pessoa.email === email) {
       const token = jwt.sign({ email: email }, SECRET, {
-        expiresIn: 300 // expires in 5min
+        expiresIn: 700 // expires in 5min
       });
       return res.json({ auth: true, token: token });
     }
@@ -86,12 +91,6 @@ app.post('/login', async (req, res, next) => {
     res.status(500).json({ error: 'Erro ao realizar o login.' });
   }
 });
-
-
-// ...
-// Resto do seu código
-
-
 
 
 
@@ -234,34 +233,20 @@ app.delete("/planos/:id", verifyJWT,async (req, res) => {
     });
   }
 });
-// read
 
-app.get("/modalidadesplanos",verifyJWT, async (req, res) => {
-  const users = await modalidadePlanos.getAll();
+// READ
+app.get("/modalidadesplanos", verifyJWT, async (req, res) => {
+const users = await modalidadePlanos.getAll();
   res.json(users);
 });
 
-app.get("/modalidadesplanos/:id", verifyJWT,async (req, res) => {
-  const { id } = req.params;
-  const user = await modalidadePlanos.find(id);
-  res.json(user);
-});
-// CREATE
-app.post("/modalidadesplanos",verifyJWT, async (req, res) => {
+// READ by IDs
+app.get("/modalidadesplanos/:id1/:id2", verifyJWT, async (req, res) => {
+  const { id1, id2 } = req.params;
   try {
-    const user = modalidadePlanos.create(req.body);
-    res.json({ message: " inserido com sucesso" });
-  } catch (error) {
-    res.status(500).json({
-      error,
-      message: error.message,
-    });
-  }
-});
-// UPDATE
-app.put("/modalidadesplanos/:id",verifyJWT, async (req, res) => {
-  try {
-    const user = await modalidadePlanos.update(req.params.id, req.body);
+    // Aqui podes utilizar os IDs capturados para fazer a busca necessária na tua lógica
+    // Por exemplo:
+    const user = await modalidadePlanos.find(id1, id2);
     res.json(user);
   } catch (error) {
     res.status(500).json({
@@ -270,12 +255,51 @@ app.put("/modalidadesplanos/:id",verifyJWT, async (req, res) => {
     });
   }
 });
+
+
+  
+// CREATE
+app.post("/modalidadesplanos", verifyJWT, async (req, res) => {
+  try {
+    
+   
+const user = await modalidadePlanos.create(req.body);
+    res.json({ message: "Inserido com sucesso" });
+  } catch (error) {
+    res.
+   
+status(500).json({
+      error,
+      message: error.message,
+    });
+  }
+});
+
+
+  
+// UPDATE
+app.put("/modalidadesplanos/:id", verifyJWT, async (req, res) => {
+
+try {
+    const user = await modalidadePlanos.update(req.params.id, req.body);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({
+      error,
+      
+ 
+message: error.message,
+    });
+  }
+});
+
+
 // DELETE
-app.delete("/modalidadesplanos/:id",verifyJWT, async (req, res) => {
+app.delete("/modalidadesplanos/:id", verifyJWT, async (req, res) => {
   try {
     const { id } = req.params;
     await modalidadePlanos.delete(id);
-    res.json({ message: " excluído com sucesso" });
+    res.json({ message: "Excluído com sucesso" });
   } catch (error) {
     res.status(500).json({
       error,
@@ -283,7 +307,10 @@ app.delete("/modalidadesplanos/:id",verifyJWT, async (req, res) => {
     });
   }
 });
-// read
+
+
+
+
 
 app.get("/matricula", verifyJWT,async (req, res) => {
   const users = await matriculaService.getAll();
@@ -299,7 +326,7 @@ app.get("/matricula/:id",verifyJWT, async (req, res) => {
 app.post("/matricula", verifyJWT,async (req, res) => {
   try {
     const user = matriculaService.create(req.body);
-    res.json(user);
+    res.json({ message: " matricula concluida  com sucesso" });
   } catch (error) {
     res.status(500).json({
       error,
@@ -348,7 +375,7 @@ app.get("/horarios/:id",verifyJWT, async (req, res) => {
 app.post("/horarios", verifyJWT,async (req, res) => {
   try {
     const user = horariosService.create(req.body);
-    res.json(user);
+    res.json({ message: " horario incluido com sucesso" });
   } catch (error) {
     res.status(500).json({
       error,
@@ -384,103 +411,6 @@ app.delete("/horarios/:id",verifyJWT, async (req, res) => {
   }
 });
 
-// READ -------------
-app.get("/listainadimplentes", async (req, res) => {
-  const users = await listaInadimplenciaService.getAll();
-  res.json(users);
-});
-
-app.get("/listainadimplentes/:id", async (req, res) => {
-  const { id } = req.params;
-  const user = await listaInadimplenciaService.find(id);
-  res.json(user);
-});
-// CREATE
-app.post("/listainadimplentes", async (req, res) => {
-  try {
-    const user = listaInadimplenciaService.create(req.body);
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({
-      error,
-      message: error.message,
-    });
-  }
-});
-// UPDATE
-app.put("/listainadimplentes/:id", async (req, res) => {
-  try {
-    const user = await listaInadimplenciaService.update(req.params.id, req.body);
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({
-      error,
-      message: error.message,
-    });
-  }
-});  
-// DELETE
-app.delete("/listainadimplentes/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    await listaInadimplenciaService.delete(id);
-    res.json({ message: "  excluído com sucesso" });
-  } catch (error) {
-    res.status(500).json({
-      error,
-      message: error.message,
-    });
-  }
-});
-
-// READ -------------
-app.get("/listapagamentos", async (req, res) => {
-  const users = await listaPagamentosService.getAll();
-  res.json(users);
-});
-
-app.get("/listapagamentos/:id", async (req, res) => {
-  const { id } = req.params;
-  const user = await listaPagamentosService.find(id);
-  res.json(user);
-});
-// CREATE
-app.post("/listapagamentos", async (req, res) => {
-  try {
-    const user = listaPagamentosService.create(req.body);
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({
-      error,
-      message: error.message,
-    });
-  }
-});
-// UPDATE
-app.put("/listapagamentos/:id", async (req, res) => {
-  try {
-    const user = await listaPagamentosService.update(req.params.id, req.body);
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({
-      error,
-      message: error.message,
-    });
-  }
-});  
-// DELETE
-app.delete("/listapagamentos/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    await listaPagamentosService.delete(id);
-    res.json({ message: "  excluído com sucesso" });
-  } catch (error) {
-    res.status(500).json({
-      error,
-      message: error.message,
-    });
-  }
-});
 app.get("/relatorioatual", async (req, res) => {
   try {
     const relatorioAtual = new RelatorioAtualService(db); // Certifique-se de passar a conexão do banco de dados aqui
