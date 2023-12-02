@@ -8,7 +8,6 @@ import { PlanosService } from "./servicos/planos.services";
 import { HorariosService } from "./servicos/horarios.services";
 import { ModalidadePlanos } from "./servicos/modalidades_planos";
 import { MatriculaService} from "./servicos/matriculas.services";
-import { ListaInadimplenciaService} from "./servicos/listainadimplentes";
 import { RelatorioAtualService} from "./servicos/relatorioAtual.services";
 import { verifyJWT } from "./conexao/autorizacao";
 import { SECRET } from "./conexao/autorizacao";
@@ -38,7 +37,6 @@ const planosService=  new PlanosService(db);
 const modalidadePlanos=  new ModalidadePlanos(db);
 const matriculaService=  new MatriculaService(db);
 const horariosService=  new HorariosService(db);
-const listaInadimplenciaService=new ListaInadimplenciaService(db);
 const relatorioAtualService=new RelatorioAtualService(db);
 
 
