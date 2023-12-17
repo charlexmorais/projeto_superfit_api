@@ -1,63 +1,47 @@
+
 import { InterfaceCrud } from "./interfaces";
 
+// modelo de dados
 type MatriculaModel = {
-  id?: string;
-  aluno_id: string;
-  plano_id: string;
-  dia_vencimento: string;
-  valor_mensalidade: string;
-  data_inicio: string;
-  data_fim: string;
+  aluno_id:string;
+  plano_id:string;
+  dia_vencimento:string;
+  valor_mensalidade:string;
+  data_inicio:string;
+  data_fim:string;
 };
-
-export class MatriculaService implements InterfaceCrud<MatriculaModel> {
+export class MatriculaService  implements InterfaceCrud<MatriculaModel> {
   db: any;
-
   constructor(db: any) {
     this.db = db;
   }
-
-  async validandoDados(payload: MatriculaModel): Promise<boolean> {
-    return true; // Pode adicionar lógica de validação aqui
-  }
-
-  async create(payload: MatriculaModel): Promise<MatriculaModel> {
-    const {
-      aluno_id,
-      plano_id,
-      dia_vencimento,
-      valor_mensalidade,
-      data_inicio,
-      data_fim,
-    } = payload;
-    const query = `
-    INSERT INTO matricula (aluno_id, plano_id ,dia_vencimento,valor_mensalidade,data_inicio,data_fim) 
-    values ($1, $2, $3, $4,$5,$6) Returning *;
-  `;
-    const values = [
-      aluno_id,
-      plano_id,
-      dia_vencimento,
-      valor_mensalidade,
-      data_inicio,
-      data_fim,
-    ];
-    const result = await this.db.query(query, values);
-    return result.rows[0];
-  }
   
+  async create(payload: MatriculaModel): Promise<MatriculaModel> {
+    const { aluno_id,plano_id,dia_vencimento,valor_mensalidade,data_inicio,data_fim} = payload; 
+
+    const query = `INSERT INTO matricula (aluno_id,plano_id,dia_vencimento,valor_mensalidade,data_inicio,data_fim) 
+    values ($1, $2, $3,$4,$5,$6) Returning *;`;
+    
+
+    const values = [aluno_id,plano_id,dia_vencimento,valor_mensalidade,data_inicio,data_fim];
+
+    const result = await this.db.query(query, values);
+   
+
+    return result.rows[0];
+    
+  }
   async getAll(): Promise<MatriculaModel[]> {
     const result = await this.db.query("SELECT * FROM matricula");
     return result.rows as MatriculaModel[];
   }
-
   async find(id: string): Promise<MatriculaModel> {
     const result = await this.db.query("SELECT * FROM matricula WHERE id=$1", [
       id,
     ]);
     return result.rows[0]; 
   }
-
+ 
   async update(
     alunoId: string,
     payload: MatriculaModel
@@ -113,18 +97,12 @@ export class MatriculaService implements InterfaceCrud<MatriculaModel> {
       throw error;
     }
   }
- 
-  async delete(alunoId: string): Promise<void> {
-    try {
-      const result = await this.db.query("DELETE FROM matricula WHERE aluno_id = $1", [
-        alunoId,
-      ]);
-      if (result.rowCount === 0) {
-        throw new Error(`Nenhum registro encontrado para aluno_id ${alunoId}`);
-      }
-    } catch (error) {
-      console.error("Erro ao excluir entrada:", error);
-      throw error;
-    }
+  
+  async delete(aluno_id: string): Promise<void> {
+    const result = await this.db.query("DELETE FROM matricula WHERE aluno_id= $1", [
+      aluno_id,
+    ]);
   }
 }
+
+

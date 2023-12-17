@@ -1,4 +1,4 @@
-// Importando a interface necessária.
+
 import { InterfaceCrud } from "./interfaces";
 
 // modelo de dados
@@ -17,11 +17,7 @@ export class HorariosService implements InterfaceCrud<HorariosModel> {
   constructor(db: any) {
     this.db = db;
   }
-  // Função para validar os dados de criação (pode ser expandida para adicionar validações específicas).
-  async validandoDados(payload: HorariosModel) {
-    return true; 
-  }
-
+  
   async create(payload: HorariosModel): Promise<HorariosModel> {
     const { dia_semana, hora_inicio, hora_fim, modalidade_id, instrutor_id } =
       payload;

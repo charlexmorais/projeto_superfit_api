@@ -1,7 +1,6 @@
 
 import { InterfaceCrud } from "./interfaces";
 
-
 type PessoaModel = {
   id?: string; 
   nome: string;
@@ -21,15 +20,11 @@ export class PessoaService implements InterfaceCrud<PessoaModel> {
     this.db = db;
   }
 
-  async getByEmailOrCGC(emailOrCGC: string): Promise<PessoaModel | null> {
-    const query = "SELECT * FROM pessoas WHERE email = $1 OR cgc = $1";
-    const result = await this.db.query(query, [emailOrCGC]);
-    return result.rows[0] || null;
-  }
- 
-  async validandoDados(payload: PessoaModel) {
-    return true; 
-  }
+  // async getByEmailOrCGC(emailOrCGC: string): Promise<PessoaModel | null> {
+  //   const query = "SELECT * FROM pessoas WHERE email = $1 OR cgc = $1";
+  //   const result = await this.db.query(query, [emailOrCGC]);
+  //   return result.rows[0] || null;
+  // }
 
   async create(payload: PessoaModel): Promise<PessoaModel> {
     const { nome, cgc, tipo_pessoa, email, tipo_cadastro, ativo } = payload;
@@ -53,21 +48,23 @@ export class PessoaService implements InterfaceCrud<PessoaModel> {
   }
 
   async update(id: string, payload: PessoaModel): Promise<PessoaModel> {
-    const { nome, email } = payload;
-    const values = [nome, email, id];
+    const { nome, email, cgc, tipo_cadastro, ativo, tipo_pessoa } = payload;
+    const values = [nome, email, cgc, tipo_cadastro, ativo, tipo_pessoa, id];
     const result = await this.db.query(
-      "UPDATE pessoas SET nome = $1, email = $2 WHERE id = $3 Returning *;",
+      "UPDATE pessoas SET nome = $1, email = $2, cgc = $3, tipo_cadastro = $4, ativo = $5, tipo_pessoa = $6 WHERE id = $7 RETURNING *;",
       values
     );
     return result.rows[0]; 
   }
+  
+  
  
  async delete(id: string): Promise<void> {
   try {
-    // Remover referências da tabela 'matricula'
+    
     await this.db.query('DELETE FROM matricula WHERE aluno_id = $1', [id]);
 
-    // Remover referências da tabela 'horarios_aulas' relacionadas ao instrutor
+    
     await this.db.query('DELETE FROM horarios_aulas WHERE instrutor_id = $1', [id]);
 
     
